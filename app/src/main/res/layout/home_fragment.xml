@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blueLight"
+    tools:context="com.example.arioniti.weatherapplication.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/homeWeatherIcon"
+            android:layout_width="65dp"
+            android:layout_height="53dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="90dp"
+            app:srcCompat="@drawable/clearsky" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/locationTextView"
+                    android:layout_width="198dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="4dp"
+                    android:text="--"
+                    android:textColor="#fff"
+                    android:textSize="35dp"
+                    android:textStyle="bold"
+                    tools:text="Prishtina" />
+
+                <TextView
+                    android:id="@+id/tempTextViews"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="--"
+                    android:textColor="#fff"
+                    android:textSize="45dp"
+                    android:textStyle="bold"
+                    tools:text="15°C" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="Kosova"
+                android:textColor="#fff"
+                android:textSize="18dp"
+                tools:text="Kosova" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:text="Good morning Arioniti,"
+                android:textColor="#fff"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/daysButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="44dp"
+        android:layout_weight="1"
+        android:allowUndo="false"
+        android:background="#ffffff"
+        android:contextClickable="false"
+        android:cursorVisible="false"
+        android:defaultFocusHighlightEnabled="false"
+        android:text="5 Days"
+
+        android:theme="@style/MyButton"
+        android:onClick="onClick"/>
+
+</RelativeLayout>
