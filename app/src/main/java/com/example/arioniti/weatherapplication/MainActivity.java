@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.arioniti.weatherapplication.db.DataSource;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String HOME_FRAGMENT = "HOME_FRAGMENT";
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
         }
 
+        new DataSource(this);
     }
 
     public void onClick(View v) {

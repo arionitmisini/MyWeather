@@ -1,8 +1,5 @@
 
-package com.example.arioniti.weatherapplication.fivedays;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+package com.example.arioniti.weatherapplication.models;
 
 public class Coord {
 

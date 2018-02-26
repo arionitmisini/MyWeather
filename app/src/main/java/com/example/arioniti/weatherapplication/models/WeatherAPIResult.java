@@ -1,17 +1,10 @@
-package com.example.arioniti.weatherapplication.fivedays;
-
-import com.example.arioniti.weatherapplication.fivedays.Clouds;
-import com.example.arioniti.weatherapplication.fivedays.Coord;
-import com.example.arioniti.weatherapplication.fivedays.Main;
-import com.example.arioniti.weatherapplication.fivedays.Sys;
-import com.example.arioniti.weatherapplication.fivedays.Weather;
-import com.example.arioniti.weatherapplication.fivedays.Wind;
+package com.example.arioniti.weatherapplication.models;
 
 import java.util.List;
 
 public class WeatherAPIResult {
 
-    private com.example.arioniti.weatherapplication.fivedays.Coord coord;
+    private com.example.arioniti.weatherapplication.models.Coord coord;
 
     private List<Weather> weather;
 
@@ -35,7 +28,7 @@ public class WeatherAPIResult {
 
     private int cod;
 
-    public com.example.arioniti.weatherapplication.fivedays.Coord getCoord() {
+    public com.example.arioniti.weatherapplication.models.Coord getCoord() {
         return coord;
     }
 

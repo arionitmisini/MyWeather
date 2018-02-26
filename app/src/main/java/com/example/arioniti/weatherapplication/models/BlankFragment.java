@@ -1,4 +1,4 @@
-package com.example.arioniti.weatherapplication.fivedays;
+package com.example.arioniti.weatherapplication.models;
 
 import android.content.Context;
 import android.net.Uri;

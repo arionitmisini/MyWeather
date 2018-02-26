@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.arioniti.weatherapplication.fivedays.Daily;
+import com.example.arioniti.weatherapplication.models.Daily;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

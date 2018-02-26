@@ -1,6 +1,5 @@
 package com.example.arioniti.weatherapplication;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,17 +7,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.arioniti.weatherapplication.dal.APIInterface;
 import com.example.arioniti.weatherapplication.dal.RetrofitClient;
-import com.example.arioniti.weatherapplication.fivedays.Daily;
-import com.example.arioniti.weatherapplication.fivedays.Main;
-import com.example.arioniti.weatherapplication.fivedays.WeatherAPIResult;
+import com.example.arioniti.weatherapplication.db.DBHelper;
+import com.example.arioniti.weatherapplication.db.HomeModel;
+import com.example.arioniti.weatherapplication.models.Main;
+import com.example.arioniti.weatherapplication.models.WeatherAPIResult;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -51,6 +48,8 @@ public class HomeFragment extends Fragment{
         locationTextView = inflate.findViewById(R.id.locationTextView);
         weatherIcon = inflate.findViewById(R.id.homeWeatherIcon);
 
+        final DBHelper dbHelper = new DBHelper(getContext());
+
         apiInterface = RetrofitClient.getClient().create(APIInterface.class);
 
         Call<WeatherAPIResult> call = apiInterface.getWeatherReq(42.660834, 21.165261, "2d16334731df0891ec0aae3edf3d73af");
@@ -60,9 +59,18 @@ public class HomeFragment extends Fragment{
                 //Initialize Main Class
                 Main main = response.body().getMain();
 
-                tempTextViews.setText(main.getTemp() + " °C");
+                /*tempTextViews.setText(main.getTemp() + " °C");
                 locationTextView.setText(response.body().getName());
-                weatherIcon.setImageResource(weatherIcon(response.body().getWeather().get(0).getIcon()));
+                weatherIcon.setImageResource(weatherIcon(response.body().getWeather().get(0).getIcon()));*/
+                dbHelper.createItem(new HomeModel(response.body().getName(),
+                       weatherIcon(response.body().getWeather().get(0).getIcon()),
+                        main.getTemp()));
+
+                HomeModel homeModel = dbHelper.getHomeModel();
+
+                tempTextViews.setText(homeModel.getTemp() + " °C");
+                locationTextView.setText(homeModel.getLocationName());
+                weatherIcon.setImageResource(homeModel.getWeatherIconPath());
 
             }
 

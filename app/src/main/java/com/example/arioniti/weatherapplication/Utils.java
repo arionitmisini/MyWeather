@@ -1,6 +1,6 @@
 package com.example.arioniti.weatherapplication;
 
-import com.example.arioniti.weatherapplication.fivedays.Daily;
+import com.example.arioniti.weatherapplication.models.Daily;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -2,10 +2,8 @@ package com.example.arioniti.weatherapplication.dal;
 
 
 
-import com.example.arioniti.weatherapplication.fivedays.FiveDaysWeatherModel;
-import com.example.arioniti.weatherapplication.fivedays.WeatherAPIResult;
-
-import java.util.List;
+import com.example.arioniti.weatherapplication.models.FiveDaysWeatherModel;
+import com.example.arioniti.weatherapplication.models.WeatherAPIResult;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

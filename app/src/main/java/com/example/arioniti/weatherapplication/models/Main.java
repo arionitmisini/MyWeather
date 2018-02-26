@@ -1,5 +1,5 @@
 
-package com.example.arioniti.weatherapplication.fivedays;
+package com.example.arioniti.weatherapplication.models;
 
 import com.google.gson.annotations.SerializedName;
 
