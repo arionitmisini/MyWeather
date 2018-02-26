@@ -4,7 +4,7 @@ package com.example.arioniti.weatherapplication.db;
  * Created by niti on 8.2.18..
  */
 
-public class WeatherDbSchema {
+public class DataSource {
     public static final class WeatherTable{
         public static final String NAME = "weather";
 
