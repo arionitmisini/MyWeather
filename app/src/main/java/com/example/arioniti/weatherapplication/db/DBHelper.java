@@ -21,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String HOME_TABLE = "home_table";
     public static final String TEMPERATURE = "temperature";
     public static final String LOCATION = "location";
-    public static final String WEATHER_ICON = "weather_icon";
+    public static final String WEATHER_ICON_PATH = "weather_icon";
 
     //Daily table fields
     public static final String DAILY_TABLE = "daily_table";
@@ -29,7 +29,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TEMP_MIN = "temp_min";
     public static final String CITY_NAME = "city_name";
     public static final String DATE_TIME = "date_time";
-    public static final String ICON_PATH = "icon_path";
+
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -37,20 +37,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         //Create Home Table query
-        String homeQuery = "CREATE TABLE " + HOME_TABLE
-                + "(" + "home_table_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + TEMPERATURE + " REAL,"
+        String homeQuery = "CREATE TABLE " + HOME_TABLE +
+                "(" + "home_table_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + LOCATION + " TEXT,"
-                + WEATHER_ICON + "INTEGER" + ");";
+                + WEATHER_ICON_PATH + " TEXT,"
+                + TEMPERATURE + " REAL"
+                + ")";
 
         //Create Daily table fields query
         String dailyQuery = "CREATE TABLE " + DAILY_TABLE
-                + "(" + "daily_table_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "(" +
+                "daily_table_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TEMP_MAX + " REAL,"
                 + TEMP_MIN + " REAL,"
                 + CITY_NAME + " TEXT,"
-                + DATE_TIME + "DATE"
-                + ICON_PATH + "INTEGER" + ");";
+                + DATE_TIME + " DATE,"
+                + WEATHER_ICON_PATH + " INTEGER"
+                + ")";
 
         //Execute queries
         sqLiteDatabase.execSQL(dailyQuery);
@@ -58,31 +61,36 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        String sql_delete = "DROP TABLE " + HOME_TABLE + "," + DAILY_TABLE;
-        sqLiteDatabase.execSQL(sql_delete);
+        String sql_delete_daily = "DROP TABLE " + DAILY_TABLE+";";
+        String sql_delete_home = "DROP TABLE " + HOME_TABLE+";";
+        sqLiteDatabase.execSQL(sql_delete_daily);
+        sqLiteDatabase.execSQL(sql_delete_home);
         onCreate(sqLiteDatabase);
     }
 
-    public HomeModel createItem(HomeModel item) {
+    public void createItem(HomeModel item) {
         ContentValues values = new ContentValues(3);
-        values.put(TEMPERATURE, item.getTemp());
+
         values.put(LOCATION, item.getLocationName());
-        values.put(WEATHER_ICON, item.getWeatherIconPath());
-        return item;
+        values.put(WEATHER_ICON_PATH, item.getWeatherIconPath());
+        values.put(TEMPERATURE, item.getTemp());
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.insert(HOME_TABLE, null, values);
+
     }
 
     public HomeModel getHomeModel(){
-        String sql = "SELECT *  FROM "+DAILY_TABLE+";";
+        String sql = "SELECT *  FROM "+HOME_TABLE+";";
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.rawQuery(sql,null);
         HomeModel homeModel = null;
-        if (cursor != null) {
+        if (cursor.getCount() > 0) {
             cursor.moveToFirst();
 
             homeModel = new HomeModel(
                     cursor.getString(1),
-                    cursor.getInt(2),
+                    cursor.getString(2),
                     cursor.getDouble(3));
         }
         return homeModel;

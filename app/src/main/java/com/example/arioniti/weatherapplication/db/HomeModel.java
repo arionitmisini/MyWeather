@@ -1,5 +1,7 @@
 package com.example.arioniti.weatherapplication.db;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by niti on 2/26/18.
  */
@@ -7,10 +9,12 @@ package com.example.arioniti.weatherapplication.db;
 public class HomeModel {
 
     private String locationName;
-    private int weatherIconPath;
+    private String weatherIconPath;
     private double temp;
+    private DecimalFormat df = new DecimalFormat("##.#");
 
-    public HomeModel(String locationName, int weatherIconPath, double temp) {
+
+    public HomeModel(String locationName, String weatherIconPath, double temp) {
         this.locationName = locationName;
         this.weatherIconPath = weatherIconPath;
         this.temp = temp;
@@ -24,16 +28,16 @@ public class HomeModel {
         this.locationName = locationName;
     }
 
-    public int getWeatherIconPath() {
+    public String getWeatherIconPath() {
         return weatherIconPath;
     }
 
-    public void setWeatherIconPath(int weatherIconPath) {
+    public void setWeatherIconPath(String weatherIconPath) {
         this.weatherIconPath = weatherIconPath;
     }
 
     public double getTemp() {
-        return temp;
+        return Double.parseDouble(df.format(temp));
     }
 
     public void setTemp(double temp) {
