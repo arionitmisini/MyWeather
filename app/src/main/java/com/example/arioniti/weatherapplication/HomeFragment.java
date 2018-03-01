@@ -62,7 +62,7 @@ public class HomeFragment extends Fragment{
                 /*tempTextViews.setText(main.getTemp() + " °C");
                 locationTextView.setText(response.body().getName());
                 weatherIcon.setImageResource(weatherIcon(response.body().getWeather().get(0).getIcon()));*/
-                dbHelper.createItem(
+                dbHelper.createHomeModelItem(
                         new HomeModel(
                                 response.body().getName(),
                         response.body().getWeather().get(0).getIcon(),

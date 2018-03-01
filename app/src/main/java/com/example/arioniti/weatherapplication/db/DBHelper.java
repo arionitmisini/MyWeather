@@ -6,6 +6,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.arioniti.weatherapplication.models.Daily;
+
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
 /**
  * Created by niti on 8.2.18..
  */
@@ -29,6 +38,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String TEMP_MIN = "temp_min";
     public static final String CITY_NAME = "city_name";
     public static final String DATE_TIME = "date_time";
+
+    //Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    DateFormat formatter = new SimpleDateFormat("dd-MMM-yy");
+
+
 
 
     public DBHelper(Context context) {
@@ -68,7 +82,7 @@ public class DBHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public void createItem(HomeModel item) {
+    public void createHomeModelItem(HomeModel item) {
         ContentValues values = new ContentValues(3);
 
         values.put(LOCATION, item.getLocationName());
@@ -95,5 +109,49 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         return homeModel;
     }
+
+    public void createDailyModel(ArrayList<Daily> daily){
+        ContentValues values = new ContentValues();
+        for(int i = 0; i < daily.size(); i++) {
+            values.put(TEMP_MAX, daily.get(i).getTempMax());
+            values.put(TEMP_MIN, daily.get(i).getTempMin());
+            values.put(CITY_NAME, daily.get(i).getName());
+            values.put(DATE_TIME, formatter.format(daily.get(i).getDate()));
+            values.put(WEATHER_ICON_PATH, daily.get(i).getIdIcon());
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.insert(DAILY_TABLE, null, values);
+
+    }
+
+    public ArrayList<Daily> getDailyArrayList(){
+
+        String sql = "Select * from " + DAILY_TABLE + ";";
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(sql,null);
+        ArrayList<Daily>temp = new ArrayList<>();
+        Daily daily = null;
+        if (cursor.getCount() > 0){
+            cursor.moveToFirst();
+            try {
+                daily = new Daily(
+                        cursor.getDouble(1),
+                        cursor.getDouble(2),
+                        cursor.getString(3),
+                        formatter.parse(cursor.getString(4)),
+                        cursor.getString(5)
+                );
+                temp.add(daily);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        return temp;
+    }
+
+
 
 }

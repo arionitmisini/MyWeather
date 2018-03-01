@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.arioniti.weatherapplication.dal.APIInterface;
 import com.example.arioniti.weatherapplication.dal.RetrofitClient;
+import com.example.arioniti.weatherapplication.db.DBHelper;
 import com.example.arioniti.weatherapplication.models.City;
 import com.example.arioniti.weatherapplication.models.Daily;
 import com.example.arioniti.weatherapplication.models.FiveDaysWeatherModel;
@@ -69,6 +70,7 @@ public class FiveDaysWeatherFragment extends Fragment {
         final DecimalFormat df = new DecimalFormat("##.##");
         final DateFormat formatter1 = new SimpleDateFormat("dd MMM");
         final ArrayList<Daily> dailyArrayList = new ArrayList<>();
+        final DBHelper dbHelper = new DBHelper(getContext());
 
         Call<FiveDaysWeatherModel> call = apiInterface.getFiveWeatherReq(42.660834, 21.165261, "2d16334731df0891ec0aae3edf3d73af");
         call.enqueue(new Callback<FiveDaysWeatherModel>() {
@@ -98,9 +100,13 @@ public class FiveDaysWeatherFragment extends Fragment {
                     }
 
                 }
+                dbHelper.createDailyModel(dailyArrayList);
+
+
                 List<Daily> dayliForFiveDaysFormated = new ArrayList<>();
+                ArrayList<Daily> temp =dbHelper.getDailyArrayList();
                 try {
-                    dayliForFiveDaysFormated = Utils.getDayliForFiveDaysFormated(dailyArrayList);
+                    dayliForFiveDaysFormated = Utils.getDayliForFiveDaysFormated(temp);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
