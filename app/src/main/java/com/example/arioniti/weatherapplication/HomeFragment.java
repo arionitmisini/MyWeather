@@ -52,6 +52,16 @@ public class HomeFragment extends Fragment{
 
         apiInterface = RetrofitClient.getClient().create(APIInterface.class);
 
+        //Check if device is not connected to the internet
+
+        if(Utils.isNetworkAvailable(getContext())){
+            HomeModel homeModel = dbHelper.getHomeModel();
+
+            tempTextViews.setText(homeModel.getTemp() + " °C");
+            locationTextView.setText(homeModel.getLocationName());
+            weatherIcon.setImageResource(weatherIcon(homeModel.getWeatherIconPath()));
+        }
+
         Call<WeatherAPIResult> call = apiInterface.getWeatherReq(42.660834, 21.165261, "2d16334731df0891ec0aae3edf3d73af");
         call.enqueue(new Callback<WeatherAPIResult>() {
             @Override
@@ -126,9 +136,6 @@ public class HomeFragment extends Fragment{
         }
         return resources;
     }
-
-
-
 
 }
 
