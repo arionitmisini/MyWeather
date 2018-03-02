@@ -9,11 +9,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.example.arioniti.weatherapplication.models.Daily;
 
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by niti on 8.2.18..
@@ -41,8 +39,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     DateFormat formatter = new SimpleDateFormat("dd-MMM-yy");
-
-
 
 
     public DBHelper(Context context) {
@@ -75,8 +71,8 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        String sql_delete_daily = "DROP TABLE " + DAILY_TABLE+";";
-        String sql_delete_home = "DROP TABLE " + HOME_TABLE+";";
+        String sql_delete_daily = "DROP TABLE " + DAILY_TABLE + ";";
+        String sql_delete_home = "DROP TABLE " + HOME_TABLE + ";";
         sqLiteDatabase.execSQL(sql_delete_daily);
         sqLiteDatabase.execSQL(sql_delete_home);
         onCreate(sqLiteDatabase);
@@ -93,11 +89,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public HomeModel getHomeModel(){
-        String sql = "SELECT *  FROM "+HOME_TABLE+";";
+    public HomeModel getHomeModel() {
+        String sql = "SELECT *  FROM " + HOME_TABLE + ";";
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(sql,null);
+        Cursor cursor = db.rawQuery(sql, null);
         HomeModel homeModel = null;
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
@@ -110,48 +106,50 @@ public class DBHelper extends SQLiteOpenHelper {
         return homeModel;
     }
 
-    public void createDailyModel(ArrayList<Daily> daily){
+    public void createDailyModel(ArrayList<Daily> daily) {
         ContentValues values = new ContentValues();
-        for(int i = 0; i < daily.size(); i++) {
+        for (int i = 0; i < daily.size(); i++) {
             values.put(TEMP_MAX, daily.get(i).getTempMax());
             values.put(TEMP_MIN, daily.get(i).getTempMin());
             values.put(CITY_NAME, daily.get(i).getName());
             values.put(DATE_TIME, formatter.format(daily.get(i).getDate()));
             values.put(WEATHER_ICON_PATH, daily.get(i).getIdIcon());
+            SQLiteDatabase db = this.getWritableDatabase();
+            db.insert(DAILY_TABLE, null, values);
         }
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.insert(DAILY_TABLE, null, values);
-
     }
 
-    public ArrayList<Daily> getDailyArrayList(){
+    public ArrayList<Daily> getDailyArrayList() {
 
         String sql = "Select * from " + DAILY_TABLE + ";";
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery(sql,null);
-        ArrayList<Daily>temp = new ArrayList<>();
+        Cursor cursor = db.rawQuery(sql, null);
+        ArrayList<Daily> temp = new ArrayList<>();
+
         Daily daily = null;
-        if (cursor.getCount() > 0){
-            cursor.moveToFirst();
-            try {
-                daily = new Daily(
-                        cursor.getDouble(1),
-                        cursor.getDouble(2),
-                        cursor.getString(3),
-                        formatter.parse(cursor.getString(4)),
-                        cursor.getString(5)
-                );
-                temp.add(daily);
-            } catch (ParseException e) {
-                e.printStackTrace();
+        if (cursor.getCount() > 0) {
+            if (cursor.moveToFirst()) {
+                do {
+                    try {
+                        daily = new Daily(
+                                cursor.getDouble(1),
+                                cursor.getDouble(2),
+                                cursor.getString(3),
+                                formatter.parse(cursor.getString(4)),
+                                cursor.getString(5)
+                        );
+                        temp.add(daily);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                } while (cursor.moveToNext());
+
             }
         }
 
-
         return temp;
     }
-
 
 
 }
