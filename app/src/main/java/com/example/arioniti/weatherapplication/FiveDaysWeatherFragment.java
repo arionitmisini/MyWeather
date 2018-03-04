@@ -74,9 +74,52 @@ public class FiveDaysWeatherFragment extends Fragment {
         final ArrayList<Daily> dailyArrayList = new ArrayList<>();
         final DBHelper dbHelper = new DBHelper(getContext());
 
-        if (Utils.isNetworkAvailable(getContext())) {
-            List<Daily> dayliForFiveDaysFormated = new ArrayList<>();
-            ArrayList<Daily> temp = dbHelper.getDailyArrayList();
+        Call<FiveDaysWeatherModel> call = apiInterface.getFiveWeatherReq(42.660834, 21.165261, "2d16334731df0891ec0aae3edf3d73af");
+        call.enqueue(new Callback<FiveDaysWeatherModel>() {
+            @Override
+            public void onResponse(Call<FiveDaysWeatherModel> call, final Response<FiveDaysWeatherModel> response) {
+                //Intialize ListWeather
+                List<ListWeather> list = response.body().getList();
+                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                //Intialize City
+                City city = response.body().getCity();
+
+                for (int i = 0; i < list.size(); i++) {
+                    String date = list.get(i).getDtTxt();
+                    try {
+                        dailyArrayList.add(
+                                new Daily(
+                                        list.get(i).getMain().getTempMax(),
+                                        list.get(i).getMain().getTempMin(),
+                                        city.getName(),
+                                        dateFormat.parse(date),
+                                        list.get(i).getWeather().get(0).getIcon()
+                                )
+                        );
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                dbHelper.createDailyModel(dailyArrayList);
+
+               }
+
+            @Override
+            public void onFailure(Call<FiveDaysWeatherModel> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+
+            }
+        });
+
+        List<Daily> dayliForFiveDaysFormated = new ArrayList<>();
+        ArrayList<Daily> temp = dbHelper.getDailyArrayList();
+
+        if (temp.size() == 0) {
+            Toast.makeText(getContext(),"Nuk keni asnje te dhene", Toast.LENGTH_SHORT).show();
+        }
+        else{
             try {
                 dayliForFiveDaysFormated = Utils.getDayliForFiveDaysFormated(temp);
             } catch (ParseException e) {
@@ -86,7 +129,9 @@ public class FiveDaysWeatherFragment extends Fragment {
             listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    //List<ListWeather> list = response.body().getList();
+
+                    //Response
+                    // List<ListWeather> list = response.body().getList();
                     Daily daily = (Daily) adapterView.getItemAtPosition(i);
                     Date dateDaily = daily.getDate();
 
@@ -142,118 +187,10 @@ public class FiveDaysWeatherFragment extends Fragment {
                     Toast.makeText(getContext(), "Date: " + formatter1.format(daily.getDate()) + "\nTemp max: " + daily.getTempMax() + "\nTemp min: " + daily.getTempMin(), Toast.LENGTH_LONG).show();
                 }
             });
+
             listView.setAdapter(new FiveDaysWeatherAdapter(getContext(), R.layout.daily_list_items, dayliForFiveDaysFormated));
+
         }
 
-        Call<FiveDaysWeatherModel> call = apiInterface.getFiveWeatherReq(42.660834, 21.165261, "2d16334731df0891ec0aae3edf3d73af");
-        call.enqueue(new Callback<FiveDaysWeatherModel>() {
-            @Override
-            public void onResponse(Call<FiveDaysWeatherModel> call, final Response<FiveDaysWeatherModel> response) {
-                //Intialize ListWeather
-                List<ListWeather> list = response.body().getList();
-                DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                //Intialize City
-                City city = response.body().getCity();
-
-                for (int i = 0; i < list.size(); i++) {
-                    String date = list.get(i).getDtTxt();
-                    try {
-                        dailyArrayList.add(
-                                new Daily(
-                                        list.get(i).getMain().getTempMax(),
-                                        list.get(i).getMain().getTempMin(),
-                                        city.getName(),
-                                        dateFormat.parse(date),
-                                        list.get(i).getWeather().get(0).getIcon()
-                                )
-                        );
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                dbHelper.createDailyModel(dailyArrayList);
-
-
-                List<Daily> dayliForFiveDaysFormated = new ArrayList<>();
-                ArrayList<Daily> temp = dbHelper.getDailyArrayList();
-                try {
-                    dayliForFiveDaysFormated = Utils.getDayliForFiveDaysFormated(temp);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                        //Response
-                        List<ListWeather> list = response.body().getList();
-                        Daily daily = (Daily) adapterView.getItemAtPosition(i);
-                        Date dateDaily = daily.getDate();
-
-                        //Pop up TextView initialize
-                        TextView cityNamePopUp, tempPopUp, tempMaxPopUp, tempMinPopUp, datePopUp, windySpeedPopUp;
-                        ImageButton imageButton;
-
-                        //Create dialog
-                        final Dialog fbDialogue = new Dialog(getContext(), android.R.style.Theme_Black_NoTitleBar);
-                        fbDialogue.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(100, 0, 0, 0)));
-                        fbDialogue.setContentView(R.layout.pop_up_fragment);
-                        fbDialogue.setCancelable(true);
-                        fbDialogue.show();
-
-                        //City temp format
-                        double temp = Double.parseDouble(df.format(daily.getTempMax()));
-
-                        //Date format
-                        DateFormat formatter1 = new SimpleDateFormat("dd MMM");
-
-                        //FindViewByID by Dialog call
-                        cityNamePopUp = fbDialogue.findViewById(R.id.city_name_popup_field);
-                        tempPopUp = fbDialogue.findViewById(R.id.temp_popup_field);
-                        tempMaxPopUp = fbDialogue.findViewById(R.id.temp_max_popup_field);
-                        tempMinPopUp = fbDialogue.findViewById(R.id.temp_min_popup_field);
-                        datePopUp = fbDialogue.findViewById(R.id.date_popup_field);
-                        windySpeedPopUp = fbDialogue.findViewById(R.id.wind_speed_popup_field);
-                        imageButton = fbDialogue.findViewById(R.id.close_button_pop_up);
-
-                        //Set TextView
-                        cityNamePopUp.setText(daily.getName() + "");
-                        tempPopUp.setText(temp + "°C");
-                        tempMaxPopUp.setText(daily.getTempMax() + "°C");
-                        tempMinPopUp.setText(daily.getTempMin() + "°C");
-                        datePopUp.setText(formatter1.format(dateDaily) + "");
-                        windySpeedPopUp.setText(list.get(i).getWind().getSpeed() + "km/h");
-
-                        //OnClick Button exit fragment
-                        imageButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                fbDialogue.dismiss();
-                            }
-                        });
-
-                        return true;
-                    }
-                });
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Daily daily = (Daily) adapterView.getItemAtPosition(i);
-                        Toast.makeText(getContext(), "Date: " + formatter1.format(daily.getDate()) + "\nTemp max: " + daily.getTempMax() + "\nTemp min: " + daily.getTempMin(), Toast.LENGTH_LONG).show();
-                    }
-                });
-
-                listView.setAdapter(new FiveDaysWeatherAdapter(getContext(), R.layout.daily_list_items, dayliForFiveDaysFormated));
-            }
-
-            @Override
-            public void onFailure(Call<FiveDaysWeatherModel> call, Throwable t) {
-                Log.e(TAG, t.getMessage());
-
-            }
-        });
     }
 }

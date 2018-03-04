@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.arioniti.weatherapplication.dal.APIInterface;
 import com.example.arioniti.weatherapplication.dal.RetrofitClient;
@@ -56,10 +57,14 @@ public class HomeFragment extends Fragment{
 
         if(Utils.isNetworkAvailable(getContext())){
             HomeModel homeModel = dbHelper.getHomeModel();
-
-            tempTextViews.setText(homeModel.getTemp() + " °C");
-            locationTextView.setText(homeModel.getLocationName());
-            weatherIcon.setImageResource(weatherIcon(homeModel.getWeatherIconPath()));
+            if(homeModel !=null) {
+                tempTextViews.setText(homeModel.getTemp() + " °C");
+                locationTextView.setText(homeModel.getLocationName());
+                weatherIcon.setImageResource(weatherIcon(homeModel.getWeatherIconPath()));
+            }
+            else{
+                Toast.makeText(getContext(),"You should connect device to internet for the first time",Toast.LENGTH_LONG).show();
+            }
         }
 
         Call<WeatherAPIResult> call = apiInterface.getWeatherReq(42.660834, 21.165261, "2d16334731df0891ec0aae3edf3d73af");
