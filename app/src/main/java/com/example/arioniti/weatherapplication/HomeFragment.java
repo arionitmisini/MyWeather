@@ -26,13 +26,17 @@ import retrofit2.Response;
  * Created by Arioniti on 1/29/2018.
  */
 
-public class HomeFragment extends Fragment{
+public class HomeFragment extends Fragment {
 
     private static final String CLEAR_SKY_ID = "01d";
 
     private APIInterface apiInterface;
     private TextView tempTextViews, locationTextView;
     private ImageView weatherIcon;
+    private View inflate;
+    private DBHelper dbHelper;
+    private HomeModel homeModel;
+    private Main main;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,28 +46,26 @@ public class HomeFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup parent, @Nullable Bundle savedInstanceState) {
         // Inflate the xml file for the fragment
-        View inflate = inflater.inflate(R.layout.home_fragment, parent, false);
+        inflate = inflater.inflate(R.layout.home_fragment, parent, false);
 
         //Initialize Views
         tempTextViews = inflate.findViewById(R.id.tempTextViews);
         locationTextView = inflate.findViewById(R.id.locationTextView);
         weatherIcon = inflate.findViewById(R.id.homeWeatherIcon);
 
-        final DBHelper dbHelper = new DBHelper(getContext());
+        dbHelper = new DBHelper(getContext());
 
         apiInterface = RetrofitClient.getClient().create(APIInterface.class);
 
         //Check if device is not connected to the internet
-
-        if(Utils.isNetworkAvailable(getContext())){
-            HomeModel homeModel = dbHelper.getHomeModel();
-            if(homeModel !=null) {
+        if (Utils.isNetworkAvailable(getContext())) {
+            homeModel = dbHelper.getHomeModel();
+            if (homeModel != null) {
                 tempTextViews.setText(homeModel.getTemp() + " °C");
                 locationTextView.setText(homeModel.getLocationName());
                 weatherIcon.setImageResource(weatherIcon(homeModel.getWeatherIconPath()));
-            }
-            else{
-                Toast.makeText(getContext(),"You should connect device to internet for the first time",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), "You should connect device to internet for the first time", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -72,7 +74,7 @@ public class HomeFragment extends Fragment{
             @Override
             public void onResponse(Call<WeatherAPIResult> call, Response<WeatherAPIResult> response) {
                 //Initialize Main Class
-                Main main = response.body().getMain();
+                main = response.body().getMain();
 
                 /*tempTextViews.setText(main.getTemp() + " °C");
                 locationTextView.setText(response.body().getName());
@@ -80,18 +82,16 @@ public class HomeFragment extends Fragment{
                 dbHelper.createHomeModelItem(
                         new HomeModel(
                                 response.body().getName(),
-                        response.body().getWeather().get(0).getIcon(),
-                        main.getTemp()
+                                response.body().getWeather().get(0).getIcon(),
+                                main.getTemp()
                         )
                 );
 
-                HomeModel homeModel = dbHelper.getHomeModel();
+                homeModel = dbHelper.getHomeModel();
 
                 tempTextViews.setText(homeModel.getTemp() + " °C");
                 locationTextView.setText(homeModel.getLocationName());
                 weatherIcon.setImageResource(weatherIcon(homeModel.getWeatherIconPath()));
-
-
             }
 
             @Override
@@ -99,6 +99,7 @@ public class HomeFragment extends Fragment{
                 Log.i("Error", t.getMessage());
             }
         });
+
         return inflate;
     }
 
