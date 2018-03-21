@@ -6,16 +6,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.example.arioniti.weatherapplication.db.AppDatabase;
 import com.example.arioniti.weatherapplication.db.DataSource;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String HOME_FRAGMENT = "HOME_FRAGMENT";
+    private AppDatabase appDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        appDatabase = AppDatabase.getInstance(this);
+
         //Initialize HomeFragment
         Fragment homeFragment = getSupportFragmentManager().findFragmentByTag(HOME_FRAGMENT);
 
@@ -29,7 +34,11 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
         }
 
+        //Database
         new DataSource(this);
+
+
+
     }
 
     public void onClick(View v) {
@@ -40,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.flContainer, firstFragment) // replace flContainer
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        AppDatabase.destroyInstance();
+        super.onDestroy();
     }
 }
 
